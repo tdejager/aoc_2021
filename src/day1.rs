@@ -28,26 +28,19 @@ pub fn first_part() -> anyhow::Result<u32> {
 
 pub fn second_part() -> anyhow::Result<u32> {
     let lines = load_file()?;
-
-    let mut sums = Vec::new();
-
-    for i in 0..lines.len() - 2 {
-        let a = lines[i];
-        let b = lines[i + 1];
-        let c = lines[i + 2];
-        sums.push(a + b + c);
-    }
-
-    let sum = sums
+    let sums = lines
         .iter()
-        .zip(sums.iter().skip(1))
-        .fold(0u32, |counter, value| {
-            if value.0 < value.1 {
-                counter + 1
-            } else {
-                counter
-            }
-        });
+        .zip(lines.iter().skip(1))
+        .zip(lines.iter().skip(2))
+        .map(|((x, y), z)| x + y + z);
+
+    let sum = sums.clone().zip(sums.skip(1)).fold(0u32, |counter, value| {
+        if value.0 < value.1 {
+            counter + 1
+        } else {
+            counter
+        }
+    });
 
     Ok(sum)
 }
